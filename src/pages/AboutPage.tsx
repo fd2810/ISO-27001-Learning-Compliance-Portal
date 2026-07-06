@@ -13,7 +13,6 @@ import {
 export default function AboutPage() {
   return (
     <div className="min-h-screen py-8">
-      {/* Narrow reading width for text-heavy content */}
       <div className="container mx-auto px-4 lg:px-8 max-w-4xl">
         {/* Header */}
         <motion.div

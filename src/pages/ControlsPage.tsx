@@ -61,7 +61,7 @@ export default function ControlsPage() {
 
   return (
     <div className="min-h-screen py-8">
-      <div className="container mx-auto px-4 lg:px-8 max-w-7xl">
+      <div className="container mx-auto px-4 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -128,9 +128,7 @@ export default function ControlsPage() {
               <button
                 key={cat.id}
                 onClick={() => handleCategoryChange(isActive ? 'all' : cat.id)}
-                aria-label={`Filter by ${cat.label} category`}
-                aria-pressed={isActive}
-                className={`glass-card p-4 text-left transition-all focus:outline-none focus:ring-2 focus:ring-accent ${
+                className={`glass-card p-4 text-left transition-all ${
                   isActive
                     ? 'border-accent bg-accent/10'
                     : 'hover:bg-neutral-800/80'

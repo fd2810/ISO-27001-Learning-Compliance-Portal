@@ -52,7 +52,7 @@ export default function ControlDetailPage() {
 
   return (
     <div className="min-h-screen py-8">
-      <div className="container mx-auto px-4 lg:px-8 max-w-7xl">
+      <div className="container mx-auto px-4 lg:px-8">
         {/* Breadcrumb */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -95,7 +95,7 @@ export default function ControlDetailPage() {
               </div>
               <h1 className="text-3xl md:text-4xl font-bold text-white">{control.title}</h1>
             </div>
-            <button className="btn btn-ghost p-2" aria-label="Bookmark control">
+            <button className="btn btn-ghost p-2">
               <Bookmark className="w-5 h-5" />
             </button>
           </div>

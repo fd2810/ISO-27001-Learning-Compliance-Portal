@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, Suspense, lazy } from 'react';
+import { useState, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Sidebar from './components/Sidebar';
@@ -37,27 +37,6 @@ function PageWrapper({ children }: { children: React.ReactNode }) {
 
 function App() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [headerScrolled, setHeaderScrolled] = useState(false);
-  const mainRef = useRef<HTMLDivElement>(null);
-
-  // Track scroll for header shadow
-  useEffect(() => {
-    const mainEl = mainRef.current;
-    if (!mainEl) return;
-
-    const handleScroll = () => {
-      setHeaderScrolled(mainEl.scrollTop > 0);
-    };
-
-    mainEl.addEventListener('scroll', handleScroll);
-    return () => mainEl.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Close mobile menu on route change
-  useEffect(() => {
-    setMobileMenuOpen(false);
-  }, []);
 
   return (
     <BrowserRouter>
@@ -85,20 +64,15 @@ function App() {
         <Sidebar
           collapsed={sidebarCollapsed}
           onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
-          mobileOpen={mobileMenuOpen}
-          onCloseMobile={() => setMobileMenuOpen(false)}
         />
 
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-w-0 relative z-10">
           {/* Header */}
-          <Header
-            onMenuClick={() => setMobileMenuOpen(true)}
-            scrolled={headerScrolled}
-          />
+          <Header />
 
           {/* Main Content */}
-          <main ref={mainRef} className="flex-1 overflow-auto bg-cyber-grid animated-gradient">
+          <main className="flex-1 overflow-auto bg-cyber-grid animated-gradient">
             <AnimatePresence mode="wait">
               <Routes>
                 <Route path="/" element={<PageWrapper><HomePage /></PageWrapper>} />

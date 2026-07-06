@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import {
   ClipboardCheck,
@@ -13,13 +13,9 @@ import {
   ChevronRight,
   Download,
   BarChart3,
-  RotateCcw,
 } from 'lucide-react';
 import { annexAControls } from '../data/mockData';
 import type { ComplianceStatus } from '../types';
-
-const STATUS_STORAGE_KEY = 'iso-shield-item-statuses';
-const EVIDENCE_STORAGE_KEY = 'iso-shield-item-evidence';
 
 const statusConfig: Record<ComplianceStatus, { label: string; icon: React.ElementType; className: string }> = {
   compliant: { label: 'Compliant', icon: CheckCircle2, className: 'badge-success' },
@@ -38,74 +34,29 @@ function getControlStats(control: typeof annexAControls[0], itemStatuses: Record
   return { total: control.auditChecklist.length, compliant };
 }
 
-// Get default values from mock data
-function getDefaultStatuses(): Record<string, ComplianceStatus> {
-  const statuses: Record<string, ComplianceStatus> = {};
-  annexAControls.forEach(control => {
-    control.auditChecklist.forEach(item => {
-      statuses[item.id] = item.status;
-    });
-  });
-  return statuses;
-}
-
-function getDefaultEvidence(): Record<string, string> {
-  const evidence: Record<string, string> = {};
-  annexAControls.forEach(control => {
-    control.auditChecklist.forEach(item => {
-      evidence[item.id] = item.evidence || '';
-    });
-  });
-  return evidence;
-}
-
 export default function ChecklistPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<ComplianceStatus | 'all'>('all');
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(annexAControls.slice(0, 2).map(c => c.id)));
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
-
-  // Load from localStorage on mount
   const [itemStatuses, setItemStatuses] = useState<Record<string, ComplianceStatus>>(() => {
-    try {
-      const stored = localStorage.getItem(STATUS_STORAGE_KEY);
-      if (stored) {
-        return JSON.parse(stored);
-      }
-    } catch {
-      // Ignore parse errors
-    }
-    return getDefaultStatuses();
+    const statuses: Record<string, ComplianceStatus> = {};
+    annexAControls.forEach(control => {
+      control.auditChecklist.forEach(item => {
+        statuses[item.id] = item.status;
+      });
+    });
+    return statuses;
   });
-
   const [itemEvidence, setItemEvidence] = useState<Record<string, string>>(() => {
-    try {
-      const stored = localStorage.getItem(EVIDENCE_STORAGE_KEY);
-      if (stored) {
-        return JSON.parse(stored);
-      }
-    } catch {
-      // Ignore parse errors
-    }
-    return getDefaultEvidence();
+    const evidence: Record<string, string> = {};
+    annexAControls.forEach(control => {
+      control.auditChecklist.forEach(item => {
+        evidence[item.id] = item.evidence || '';
+      });
+    });
+    return evidence;
   });
-
-  // Persist to localStorage on changes
-  useEffect(() => {
-    localStorage.setItem(STATUS_STORAGE_KEY, JSON.stringify(itemStatuses));
-  }, [itemStatuses]);
-
-  useEffect(() => {
-    localStorage.setItem(EVIDENCE_STORAGE_KEY, JSON.stringify(itemEvidence));
-  }, [itemEvidence]);
-
-  // Reset to defaults
-  const resetToDefaults = useCallback(() => {
-    const defaults = getDefaultStatuses();
-    const evidenceDefaults = getDefaultEvidence();
-    setItemStatuses(defaults);
-    setItemEvidence(evidenceDefaults);
-  }, []);
 
   const stats = useMemo(() => {
     let total = 0;
@@ -227,7 +178,7 @@ export default function ChecklistPage() {
 
   return (
     <div className="min-h-screen py-8">
-      <div className="container mx-auto px-4 lg:px-8 max-w-7xl">
+      <div className="container mx-auto px-4 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -247,24 +198,14 @@ export default function ChecklistPage() {
                 Interactive checklist for ISO 27001 certification audit preparation
               </p>
             </div>
-            <div className="flex gap-2">
-              <button
-                onClick={exportReport}
-                className="btn btn-secondary gap-2"
-                aria-label="Export checklist as CSV"
-              >
-                <Download className="w-4 h-4" />
-                Export Report
-              </button>
-              <button
-                onClick={resetToDefaults}
-                className="btn btn-ghost gap-2"
-                aria-label="Reset checklist to default values"
-              >
-                <RotateCcw className="w-4 h-4" />
-                Reset
-              </button>
-            </div>
+            <button
+              onClick={exportReport}
+              className="btn btn-secondary gap-2"
+              aria-label="Export checklist as CSV"
+            >
+              <Download className="w-4 h-4" />
+              Export Report
+            </button>
           </div>
         </motion.div>
 
